@@ -97,7 +97,7 @@ impl Display for DFA {
         for state_index in self.accepting_states.iter() {
             let state = &self.states[*state_index];
 
-            writeln!(f, "    {}", state.name)?;
+            writeln!(f, "    {},", state.name)?;
         }
 
         writeln!(f, "  }}\n)")?;
