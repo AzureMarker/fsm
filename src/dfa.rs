@@ -65,22 +65,22 @@ impl DFA {
 
 impl Display for DFA {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        writeln!(f, "DFA(Σ, Q, δ, q0, F): (")?;
-        writeln!(f, "  {{")?;
+        writeln!(f, "DFA(Σ, Q, δ, q0, F): {{")?;
+        writeln!(f, "  Σ: {{")?;
 
         for symbol in self.alphabet.iter() {
             writeln!(f, "    {},", symbol)?;
         }
 
         writeln!(f, "  }},")?;
-        writeln!(f, "  {{")?;
+        writeln!(f, "  Q: {{")?;
 
         for state in self.states.iter() {
             writeln!(f, "    {},", state.name)?;
         }
 
         writeln!(f, "  }},")?;
-        writeln!(f, "  {{")?;
+        writeln!(f, "  δ: {{")?;
 
         for state in self.states.iter() {
             for (symbol, state_index) in state.transitions.iter() {
@@ -91,8 +91,8 @@ impl Display for DFA {
         }
 
         writeln!(f, "  }},")?;
-        writeln!(f, "  {},", self.states[self.start_state].name)?;
-        writeln!(f, "  {{")?;
+        writeln!(f, "  q0: {},", self.states[self.start_state].name)?;
+        writeln!(f, "  F: {{")?;
 
         for state_index in self.accepting_states.iter() {
             let state = &self.states[*state_index];
