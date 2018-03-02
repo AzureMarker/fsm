@@ -4,6 +4,42 @@ use std::collections::HashSet;
 use std::fmt::{self, Display, Formatter};
 use common::{State, Symbol};
 
+#[macro_export]
+macro_rules! dfa {
+    (
+        {$($letter: ident),+},
+        {$($state: ident),+},
+        {$(($delta_state: ident, $delta_letter: ident) => $delta_result: expr),*},
+        $q0: expr,
+        {$($final: expr),*}
+    ) => {{
+        $(
+            let $letter = Symbol::new(stringify!($letter).chars().next().unwrap());
+        )*
+
+        $(
+            let mut $state: HashMap<Symbol, usize> = HashMap::new();
+        )*
+
+        $(
+            $delta_state.insert($delta_letter, $delta_result);
+        )*
+
+        let states = vec![$(
+            State { name: stringify!($state).to_owned(), transitions: $state },
+        )*];
+
+        let mut alphabet = HashSet::new();
+
+        $(
+            alphabet.insert($letter);
+        )*
+
+        let accepting_states = vec![$($final,)*];
+        DFA::new(alphabet, states, $q0, accepting_states).unwrap()
+    }}
+}
+
 pub struct DFA {
     alphabet: HashSet<Symbol>,
     states: Vec<State>,
