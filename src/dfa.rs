@@ -17,12 +17,21 @@ macro_rules! dfa {
             let $letter = Symbol::new(stringify!($letter).chars().next().unwrap());
         )*
 
+        let state_names = vec![
+            $(
+                stringify!($state),
+            )*
+        ];
+
         $(
             let mut $state: HashMap<Symbol, usize> = HashMap::new();
         )*
 
         $(
-            $delta_state.insert($delta_letter, $delta_result);
+            $delta_state.insert(
+                $delta_letter,
+                state_names.iter().position(|s| *s == stringify!($delta_result)).unwrap()
+            );
         )*
 
         let states = vec![$(
@@ -36,12 +45,12 @@ macro_rules! dfa {
         )*
 
         let start_state = {
-            states.iter().position(|s| s.name == stringify!($q0)).unwrap()
+            state_names.iter().position(|s| *s == stringify!($q0)).unwrap()
         };
 
         let accepting_states = vec![
             $(
-                states.iter().position(|s| s.name == stringify!($accepting)).unwrap(),
+                state_names.iter().position(|s| *s == stringify!($accepting)).unwrap(),
             )*
         ];
 
