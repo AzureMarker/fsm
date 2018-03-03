@@ -10,8 +10,8 @@ macro_rules! dfa {
         {$($letter: ident),+},
         {$($state: ident),+},
         {$(($delta_state: ident, $delta_letter: ident) => $delta_result: expr),*},
-        $q0: expr,
-        {$($final: expr),*}
+        $q0: ident,
+        {$($accepting: ident),*}
     ) => {{
         $(
             let $letter = Symbol::new(stringify!($letter).chars().next().unwrap());
@@ -35,8 +35,17 @@ macro_rules! dfa {
             alphabet.insert($letter);
         )*
 
-        let accepting_states = vec![$($final,)*];
-        DFA::new(alphabet, states, $q0, accepting_states).unwrap()
+        let start_state = {
+            states.iter().position(|s| s.name == stringify!($q0)).unwrap()
+        };
+
+        let accepting_states = vec![
+            $(
+                states.iter().position(|s| s.name == stringify!($accepting)).unwrap(),
+            )*
+        ];
+
+        DFA::new(alphabet, states, start_state, accepting_states).unwrap()
     }}
 }
 
