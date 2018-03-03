@@ -9,7 +9,7 @@ macro_rules! dfa {
     (
         {$($letter: ident),+},
         {$($state: ident),+},
-        {$(($delta_state: ident, $delta_letter: ident) => $delta_result: expr),*},
+        {$(($delta_state: ident, $delta_letter: ident) -> $delta_result: expr),*},
         $q0: ident,
         {$($accepting: ident),*}
     ) => {{
@@ -140,7 +140,7 @@ impl Display for DFA {
             for (symbol, state_index) in state.transitions.iter() {
                 let new_state = &self.states[*state_index];
 
-                writeln!(f, "    δ({}, {}) = {},", state.name, symbol, new_state.name)?;
+                writeln!(f, "    δ({}, {}) -> {},", state.name, symbol, new_state.name)?;
             }
         }
 
