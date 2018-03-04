@@ -1,9 +1,8 @@
-//! Deterministic Finite Automata (DFA)
-
 use std::collections::HashSet;
 use std::fmt::{self, Display, Formatter};
 use common::{State, Symbol};
 
+/// Create a DFA according to the formal definition
 #[macro_export]
 macro_rules! dfa {
     (
@@ -58,6 +57,7 @@ macro_rules! dfa {
     }}
 }
 
+/// A Deterministic Finite Automata (DFA)
 pub struct DFA {
     alphabet: HashSet<Symbol>,
     states: Vec<State>,
@@ -93,10 +93,12 @@ impl DFA {
         )
     }
 
+    /// Get the current state of the DFA
     pub fn get_current_state(&self) -> &State {
         &self.states[self.current_state_index]
     }
 
+    /// Run the DFA over a string to see if it accepts it
     pub fn accepts(&mut self, string: Vec<Symbol>) -> bool {
         for symbol in string {
             self.step(symbol);
@@ -105,6 +107,7 @@ impl DFA {
         self.is_accepting()
     }
 
+    /// Take one step with the given symbol
     pub fn step(&mut self, symbol: Symbol) {
         let state = self.states.get(self.current_state_index).unwrap();
         self.current_state_index = *state.transitions.get(&symbol).unwrap();
@@ -112,6 +115,7 @@ impl DFA {
         println!("δ({}, {}) => {}", state.name, symbol, new_state.name);
     }
 
+    /// Check if the current state is accepting
     pub fn is_accepting(&self) -> bool {
         self.accepting_states.contains(&self.current_state_index)
     }
