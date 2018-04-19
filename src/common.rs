@@ -5,7 +5,27 @@ use std::fmt::{self, Display, Formatter};
 #[derive(Clone)]
 pub struct State {
     pub name: String,
-    pub transitions: HashMap<Symbol, usize>
+    pub transitions: HashMap<Symbol, Transition>
+}
+
+/// A state transition
+#[derive(Clone)]
+pub struct Transition {
+    pub next_state: usize,
+    pub note: Note
+}
+
+/// A MIDI note
+#[derive(Clone)]
+pub struct Note {
+    /// The pitch of the note
+    pub pitch: u8,
+
+    /// How loud a note sounds
+    pub velocity: u8,
+
+    /// Duration of the note in milliseconds
+    pub duration: usize
 }
 
 /// Represents a symbol in an alphabet

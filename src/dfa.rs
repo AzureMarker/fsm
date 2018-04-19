@@ -23,13 +23,20 @@ macro_rules! dfa {
         ];
 
         $(
-            let mut $state: HashMap<Symbol, usize> = HashMap::new();
+            let mut $state: HashMap<Symbol, Transition> = HashMap::new();
         )*
 
         $(
             $delta_state.insert(
                 $delta_letter,
-                state_names.iter().position(|s| *s == stringify!($delta_result)).unwrap()
+                Transition {
+                    next_state: state_names.iter().position(|s| *s == stringify!($delta_result)).unwrap(),
+                    note: Note {
+                        pitch: 0,
+                        velocity: 0,
+                        duration: 0
+                    }
+                }
             );
         )*
 
@@ -110,7 +117,7 @@ impl DFA {
     /// Take one step with the given symbol
     pub fn step(&mut self, symbol: Symbol) {
         let state = self.states.get(self.current_state_index).unwrap();
-        self.current_state_index = *state.transitions.get(&symbol).unwrap();
+        self.current_state_index = state.transitions.get(&symbol).unwrap().next_state;
         let new_state = self.states.get(self.current_state_index).unwrap();
         println!("δ({}, {}) => {}", state.name, symbol, new_state.name);
     }
@@ -141,8 +148,8 @@ impl Display for DFA {
         writeln!(f, "  δ: {{")?;
 
         for state in self.states.iter() {
-            for (symbol, state_index) in state.transitions.iter() {
-                let new_state = &self.states[*state_index];
+            for (symbol, transition) in state.transitions.iter() {
+                let new_state = &self.states[transition.next_state];
 
                 writeln!(f, "    δ({}, {}) -> {},", state.name, symbol, new_state.name)?;
             }
