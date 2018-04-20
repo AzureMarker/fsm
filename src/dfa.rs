@@ -8,7 +8,10 @@ macro_rules! dfa {
     (
         {$($letter: ident),+},
         {$($state: ident),+},
-        {$(($delta_state: ident, $delta_letter: ident) -> $delta_result: expr),*},
+        {
+            $(($delta_state: ident, $delta_letter: ident) ->
+            [$delta_result: expr, $pitch: expr, $velocity: expr, $duration: expr]),*
+        },
         $q0: ident,
         {$($accepting: ident),*}
     ) => {{
@@ -32,9 +35,9 @@ macro_rules! dfa {
                 Transition {
                     next_state: state_names.iter().position(|s| *s == stringify!($delta_result)).unwrap(),
                     note: Note {
-                        pitch: 0,
-                        velocity: 0,
-                        duration: 0
+                        pitch: $pitch,
+                        velocity: $velocity,
+                        duration: $duration
                     }
                 }
             );
@@ -64,7 +67,7 @@ macro_rules! dfa {
     }}
 }
 
-/// A Deterministic Finite Automata (DFA)
+/// A Deterministic Finite Automaton (DFA)
 pub struct DFA {
     alphabet: HashSet<Symbol>,
     states: Vec<State>,
