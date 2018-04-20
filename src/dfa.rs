@@ -15,26 +15,40 @@ macro_rules! dfa {
         $q0: ident,
         {$($accepting: ident),*}
     ) => {{
+        // Create the symbols
         $(
-            let $letter = Symbol::new(stringify!($letter).chars().next().unwrap());
+            let $letter = $crate::common::Symbol::new(
+                stringify!($letter)
+                    .chars()
+                    .next()
+                    .unwrap()
+            );
         )*
 
+        // Create a list of state names so we know the index of each state
         let state_names = vec![
             $(
                 stringify!($state),
             )*
         ];
 
+        // Initialize the transition maps for each state
         $(
-            let mut $state: HashMap<Symbol, Transition> = HashMap::new();
+            let mut $state = HashMap::new();
         )*
 
+        // For each state transition, insert a new transition into the state
         $(
             $delta_state.insert(
                 $delta_letter,
-                Transition {
-                    next_state: state_names.iter().position(|s| *s == stringify!($delta_result)).unwrap(),
-                    note: Note {
+                $crate::common::Transition {
+                    // Use state_names to find the index of the state
+                    next_state: state_names
+                                    .iter()
+                                    .position(|s| *s == stringify!($delta_result))
+                                    .unwrap(),
+                    // Create the note data
+                    note: $crate::common::Note {
                         pitch: $pitch,
                         velocity: $velocity,
                         duration: $duration
@@ -43,27 +57,44 @@ macro_rules! dfa {
             );
         )*
 
+        // Create the actual list of states
         let states = vec![$(
-            State { name: stringify!($state).to_owned(), transitions: $state },
+            $crate::common::State {
+                name: stringify!($state).to_owned(),
+                transitions: $state
+            },
         )*];
 
+        // Create the alphabet from the symbols
         let mut alphabet = HashSet::new();
 
         $(
             alphabet.insert($letter);
         )*
 
-        let start_state = {
-            state_names.iter().position(|s| *s == stringify!($q0)).unwrap()
-        };
+        // Find the start state index
+        let start_state = state_names
+            .iter()
+            .position(|s| *s == stringify!($q0))
+            .unwrap();
 
+        // Find the accepting states' indices
         let accepting_states = vec![
             $(
-                state_names.iter().position(|s| *s == stringify!($accepting)).unwrap(),
+                state_names
+                    .iter()
+                    .position(|s| *s == stringify!($accepting))
+                    .unwrap(),
             )*
         ];
 
-        DFA::new(alphabet, states, start_state, accepting_states).unwrap()
+        // Create the DFA
+        $crate::dfa::DFA::new(
+            alphabet,
+            states,
+            start_state,
+            accepting_states
+        ).unwrap()
     }}
 }
 
@@ -84,8 +115,8 @@ impl DFA {
         accepting_states: Vec<usize>,
     ) -> Result<DFA, String> {
         // Verify all transitions are present
-        for state in states.clone() {
-            for symbol in alphabet.clone() {
+        for state in &states {
+            for symbol in &alphabet {
                 if !state.transitions.contains_key(&symbol) {
                     return Err("Invalid DFA: Missing transition".to_owned());
                 }

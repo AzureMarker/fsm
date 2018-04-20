@@ -2,8 +2,7 @@
 
 use std::collections::{HashMap, HashSet};
 use std::env;
-use fsm::common::{State, Symbol, Transition, Note};
-use fsm::dfa::DFA;
+use fsm::common::{Symbol};
 
 fn main() {
     let mut dfa = dfa!(
