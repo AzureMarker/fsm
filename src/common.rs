@@ -37,9 +37,8 @@ impl Symbol {
     }
 
     /// Create symbols from a string
-    pub fn from<T: Into<String>>(string: T) -> Vec<Symbol> {
+    pub fn from(string: &str) -> Vec<Symbol> {
         string
-            .into()
             .chars()
             .map(Symbol::new)
             .collect()

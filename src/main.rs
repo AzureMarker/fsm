@@ -30,7 +30,7 @@ fn main() {
 
     if let Some(string) = input {
         println!("Input: {}", string);
-        println!("Result: {}", dfa.accepts(Symbol::from(string)));
+        println!("Result: {}", dfa.accepts(Symbol::from(&string)));
     } else {
         println!("Usage: {} [string]", env::args().nth(0).unwrap())
     }
