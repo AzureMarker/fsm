@@ -22,7 +22,7 @@ pub struct Note {
     pub velocity: u8,
 
     /// Duration of the note in milliseconds
-    pub duration: usize
+    pub duration: u8
 }
 
 /// Represents a symbol in an alphabet

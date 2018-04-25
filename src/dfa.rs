@@ -1,6 +1,8 @@
 use std::collections::HashSet;
 use std::fmt::{self, Display, Formatter};
+use std::error::Error;
 use common::{State, Symbol};
+use midi_client::MidiClient;
 
 /// Create a DFA according to the formal definition
 #[macro_export]
@@ -93,7 +95,8 @@ macro_rules! dfa {
             alphabet,
             states,
             start_state,
-            accepting_states
+            accepting_states,
+            "localhost:1337"
         ).unwrap()
     }}
 }
@@ -104,7 +107,9 @@ pub struct DFA {
     states: Vec<State>,
     start_state: usize,
     accepting_states: Vec<usize>,
-    current_state_index: usize
+    current_state_index: usize,
+    song_time: usize,
+    midi_client: MidiClient
 }
 
 impl DFA {
@@ -113,6 +118,7 @@ impl DFA {
         states: Vec<State>,
         start_state: usize,
         accepting_states: Vec<usize>,
+        midi_server_address: &str
     ) -> Result<DFA, String> {
         // Verify all transitions are present
         for state in &states {
@@ -129,7 +135,10 @@ impl DFA {
                 states,
                 start_state,
                 accepting_states,
-                current_state_index: start_state
+                current_state_index: start_state,
+                song_time: 0,
+                midi_client: MidiClient::new(midi_server_address)
+                    .map_err(|e| e.description().to_owned())?
             }
         )
     }
@@ -145,13 +154,26 @@ impl DFA {
             self.step(symbol);
         }
 
+        // Send EOF to MIDI server
+        self.midi_client.close().unwrap();
+
         self.is_accepting()
     }
 
     /// Take one step with the given symbol
     pub fn step(&mut self, symbol: Symbol) {
-        let state = self.states.get(self.current_state_index).unwrap();
-        self.current_state_index = state.transitions.get(&symbol).unwrap().next_state;
+        // Get the current state and transition
+        let state: &State = self.states.get(self.current_state_index).unwrap();
+        let transition = state.transitions.get(&symbol).unwrap();
+
+        // Apply the transition
+        self.current_state_index = transition.next_state;
+
+        // Send the note to be added to the midi song
+        self.midi_client.send(&transition.note, self.song_time as u8).unwrap();
+        self.song_time += transition.note.duration as usize;
+
+        // Print the transition
         let new_state = self.states.get(self.current_state_index).unwrap();
         println!("δ({}, {}) => {}", state.name, symbol, new_state.name);
     }
