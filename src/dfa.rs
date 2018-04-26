@@ -170,7 +170,7 @@ impl DFA {
         self.current_state_index = transition.next_state;
 
         // Send the note to be added to the midi song
-        self.midi_client.send(&transition.note, self.song_time as u8).unwrap();
+        self.midi_client.send(&transition.note, self.song_time as u64).unwrap();
         self.song_time += transition.note.duration as usize;
 
         // Print the transition

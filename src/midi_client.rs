@@ -1,6 +1,7 @@
 use std::net::TcpStream;
 use std::io::{self, Write};
 use common::Note;
+use byteorder::{WriteBytesExt, BigEndian};
 
 pub struct MidiClient {
     connection: TcpStream
@@ -17,13 +18,15 @@ impl MidiClient {
     }
 
     /// Send a note and its start time to the MIDI server
-    pub fn send(&mut self, note: &Note, time: u8) -> io::Result<()> {
+    pub fn send(&mut self, note: &Note, time: u64) -> io::Result<()> {
         self.connection.write_all(&[
             note.pitch,
             note.velocity,
-            note.duration,
-            time
+            note.duration
         ])?;
+        let mut time_vec = Vec::new();
+        time_vec.write_u64::<BigEndian>(time)?;
+        self.connection.write_all(&time_vec)?;
 
         Ok(())
     }
