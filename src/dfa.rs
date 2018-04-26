@@ -124,7 +124,7 @@ impl DFA {
         for state in &states {
             for symbol in &alphabet {
                 if !state.transitions.contains_key(&symbol) {
-                    return Err("Invalid DFA: Missing transition".to_owned());
+                    return Err(format!("Invalid DFA: Missing transition ({}, {})", state.name, symbol));
                 }
             }
         }
