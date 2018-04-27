@@ -16,9 +16,11 @@ macro_rules! dfa {
         },
         $q0: ident,
         {$($accepting: ident),*}
-    ) => {{
+    ) => {
+    {
         // Create the symbols
         $(
+            #[allow(non_snake_case)]
             let $letter = $crate::common::Symbol::new(
                 stringify!($letter)
                     .chars()

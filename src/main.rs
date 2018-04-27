@@ -5,8 +5,8 @@ use std::env;
 use fsm::common::{Symbol};
 
 fn main() {
-    // Legend of Zelda - Main Theme:
     /*
+    // Legend of Zelda - Main Theme:
     Gf Ba Ba Bf
     Ad Ab Hd
     Gf Bb Bb Bf
@@ -36,7 +36,6 @@ fn main() {
     // Compiled program input
     GfBaBaBfAdAbHdGfBbBbBfAeAcHeDfEaBfAfAhAjAkGmBmBmAnApGrBrBrApAnCpAnFmDmBkAkAmFnBmBkBiAiAkFmBkBiBhAhAjFlDoBmAaAaBaAaAaBaAaAaBaAaAaDfEaBfAfAhAjAkGmBmBmAnApHrDuDtFqDmHnDrDqFmDmHnDrDqFmDjHkDnDmFiDfBhAhAjFlDoBmAaAaBaAaAaHaHa
     */
-    #[allow(non_snake_case)]
     let mut dfa = dfa!(
         {
             a, b, c, d, e, f, g, h, i, j, k, l, m,
