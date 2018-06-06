@@ -26,7 +26,7 @@ pub struct Note {
 }
 
 /// Represents a symbol in an alphabet
-#[derive(Copy, Clone, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Hash, Eq, PartialEq, Debug)]
 pub enum Symbol {
     Epsilon, Letter(char)
 }
