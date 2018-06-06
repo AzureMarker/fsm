@@ -1,0 +1,13 @@
+image: "rust:1.26.1"
+
+variables:
+  - CARGO_HOME="$CI_PROJECT_DIR/cargo"
+
+test:
+  script:
+  - rustc --version && cargo --version
+  - cargo test --all --verbose
+  cache:
+    paths:
+      - target/
+      - cargo/
