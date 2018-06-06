@@ -1,7 +1,7 @@
 image: "rust:1.26.1"
 
 variables:
-  - CARGO_HOME="$CI_PROJECT_DIR/cargo"
+  - CARGO_HOME: "$CI_PROJECT_DIR/cargo"
 
 test:
   script:
