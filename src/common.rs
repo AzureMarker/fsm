@@ -53,3 +53,23 @@ impl Display for Symbol {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Symbol;
+
+    #[test]
+    fn test_symbol_from_str() {
+        let word = "word";
+        let expected_symbols = vec![
+            Symbol::Letter('w'),
+            Symbol::Letter('o'),
+            Symbol::Letter('r'),
+            Symbol::Letter('d'),
+        ];
+
+        let actual_symbols = Symbol::from(word);
+
+        assert_eq!(expected_symbols, actual_symbols)
+    }
+}

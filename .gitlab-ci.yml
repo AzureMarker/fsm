@@ -6,7 +6,7 @@ variables:
 test:
   script:
   - rustc --version && cargo --version
-  - cargo test --all --verbose
+  - cargo test --all
   cache:
     paths:
       - target/
